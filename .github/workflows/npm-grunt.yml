@@ -1,0 +1,64 @@
+name: Hyperbeam Virtual Browser CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+  DISPLAY: :99
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    services:
+      xvfb:
+        runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgbm-dev wget xvfb
+        
+    - name: Install project dependencies
+      run: |
+        cd backend
+        npm install --legacy-peer-deps
+        npm install ngrok puppeteer
+        cd ../frontend
+        npm install
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Start Xvfb
+      run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
+    - name: Start backend with Ngrok tunnel
+      run: |
+        cd backend
+        nohup node server.js > server.log 2>&1 &
+        sleep 10
+        echo "Ngrok tunnel: $(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')"
+        
+    - name: Run tests
+      run: |
+        cd backend
+        npm test
