@@ -16,3 +16,10 @@ hyperbeam-virtual-browser/
 ├── README.md              (Project documentation)
 └── .gitignore            (Ignore node_modules, etc.)
 ```
+
+cd path/to/your/hyperbeam-virtual-browser
+git init
+git add 
+git commit -m "First commit: Hyperbeam virtual browser clone"
+git remote add origin https://github.com/your-username/hyperbeam-virtual-browser.git
+git push -u origin main
