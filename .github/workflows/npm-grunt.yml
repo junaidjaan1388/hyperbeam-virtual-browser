@@ -13,9 +13,15 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    
     services:
       xvfb:
-        runs-on: ubuntu-latest
+        image: node:18-buster-slim
+        options: >-
+          --entrypoint /bin/bash
+          -e DISPLAY=:99
+        ports:
+          - 5920:5920
 
     strategy:
       matrix:
