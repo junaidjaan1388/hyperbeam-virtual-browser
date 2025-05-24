@@ -5,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+      - NGROK_AUTH_TOKEN=${2xSvNWmMSd6WAo6YQtRwJ89U2XT_3boxW8mfbeMsMcnUFSg7X}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     command: ["npm", "start"]
